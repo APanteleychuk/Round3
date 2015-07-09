@@ -1,0 +1,8 @@
+name = My Layout
+core = 7.x
+dependencies[] = panels
+version = "7.x-1"
+core = "7.x"
+project = "my_layout"
+
+
