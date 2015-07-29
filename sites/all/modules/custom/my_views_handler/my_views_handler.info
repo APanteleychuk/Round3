@@ -1,0 +1,7 @@
+name = my_views_handler
+description = Custom Views handlers
+package = Handlers
+core = 7.x
+files[] = my_views_handler.module
+files[] = my_views_handler_my_custom_filter.inc
+files[] = my_views_handler_custom_field.inc

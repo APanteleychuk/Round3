@@ -5,18 +5,18 @@ function my_layout_ctools_plugin_directory($module, $plugin) {
 }
 
 
-function my_layout_ctools_plugin_post_alter(&$plugin, &$info) {
-  if ($info['type'] == 'layouts' && $plugin['module'] == 'panopoly_theme') {
-    if (strpos($plugin['theme'], 'my_') === FALSE) {
-      $new_name = 'my_' . $plugin['theme'];
-      $path = drupal_get_path('module', 'my_layout') . '/plugins/layouts/' . $new_name;
-      if (file_exists($path)) {
-        $plugin['theme'] = $new_name;
-        $plugin['file'] = 'my_' . $plugin['file'];
-        $plugin['path'] = $path;
-        $plugin['icon'] = 'my-' . $plugin['icon'];
-        unset($plugin['css']);
-      }
-    }
-  }
-}
+//function my_layout_ctools_plugin_post_alter(&$plugin, &$info) {
+//  if ($info['type'] == 'layouts' && $plugin['module'] == 'panopoly_theme') {
+//    if (strpos($plugin['theme'], 'my_') === FALSE) {
+//      $new_name = 'my_' . $plugin['theme'];
+//      $path = drupal_get_path('module', 'my_layout') . '/plugins/layouts/' . $new_name;
+//      if (file_exists($path)) {
+//        $plugin['theme'] = $new_name;
+//        $plugin['file'] = 'my_' . $plugin['file'];
+//        $plugin['path'] = $path;
+//        $plugin['icon'] = 'my-' . $plugin['icon'];
+//        unset($plugin['css']);
+//      }
+//    }
+//  }
+//}

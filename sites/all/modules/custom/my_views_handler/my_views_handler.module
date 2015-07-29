@@ -1,0 +1,26 @@
+<?php
+/**
+ * Implements of hook_views_api().
+ */
+function my_views_handler_views_api() {
+  return array('api' => 3);
+}
+
+function my_views_handler_views_handlers() {
+  return array(
+    'info' => array(
+      'path' => drupal_get_path('module', 'my_views_handler'),
+    ),
+    'handlers' => array(
+      // The name of my handler
+      'my_views_handler_custom_field' => array(
+        // The name of the handler we are extending.
+        'parent' => 'my_views_handler_field',
+      ),
+      'my_views_handler_my_custom_filter' => array(
+        // The name of the handler we are extending.
+        'parent' => 'my_views_handler_filter',
+      ),
+    ),
+  );
+}
