@@ -1,0 +1,14 @@
+
+name = Switcheroo
+description = Provides an easy method to switch between a core and contrib version of a module.
+package = Development
+core = 7.x
+files[] = switcheroo.install
+files[] = switcheroo.module
+
+; Information added by drupal.org packaging script on 2013-10-18
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "switcheroo"
+datestamp = "1382135351"
+
