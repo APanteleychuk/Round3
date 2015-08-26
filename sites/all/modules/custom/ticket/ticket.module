@@ -253,7 +253,6 @@ function ticket_form($form, &$form_state, $entity) {
 
 //ticket_form_validate
 function ticket_form_validate($form, &$form_state) {
-//  field_attach_form_validate('ticket', $form_state['ticket'], $form, $form_state);
   if (is_numeric($form_state['values']['seats']) &&  $form_state['values']['seats'] > 0) {
         field_attach_form_validate('ticket', $form_state['ticket'], $form, $form_state);
       } else {
@@ -275,8 +274,4 @@ function ticket_form_submit($form, &$form_state) {
         $form_state['redirect'] = 'ticket/get/success/';
      }
 
-
-
-  // $form_state['redirect'] = 'examples/entity_example/basic/' . $entity->basic_id;
-  // $form_state['redirect'] = 'admin/structure/tickets/manage';
 }
