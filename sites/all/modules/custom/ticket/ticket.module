@@ -49,11 +49,11 @@ function ticket_menu() {
   );
 
 //   Add example entities.
-  $items['ticket/get'] = array(
-    'title' => 'Request a ticket',
-    'page callback' => 'ticket_add',
-    'access arguments' => array('create ticket entity'),
-  );
+//  $items['ticket/get'] = array(
+//    'title' => 'Request a ticket',
+//    'page callback' => 'ticket_add',
+//    'access arguments' => array('create ticket entity'),
+//  );
 
   $items['ticket/%ticket'] = array(
     'title callback' => 'ticket_title',
@@ -81,8 +81,8 @@ function ticket_menu() {
 
   $items['ticket/%ticket/delete'] = array(
     'title' => 'Delete',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ticket_delete_form', 1),
+    'page callback' => 'ticket_delete',
+    'page arguments' => array(1),
     'access arguments' => array('delete ticket entity'),
     'type' => MENU_LOCAL_TASK,
   );
@@ -155,7 +155,6 @@ function ticket_list_entities() {
   $content = array();
   // Load all of our entities.
   $entities = ticket_load_multiple();
-
   $destination = drupal_get_destination();
 
   if (!empty($entities)) {
@@ -167,10 +166,17 @@ function ticket_list_entities() {
           'seats' => $entity->seats,
           'operations' => array(
             'data' => array(
-              '#type' => 'link',
-              '#title' => t('edit'),
-              '#href' => "ticket/$entity->tid/edit",
-              '#options' => array('query' => $destination)
+              array('#type' => 'link',
+                '#title' => t('edit'),
+                '#href' => "ticket/$entity->tid/edit",
+                '#options' => array('query' => $destination)),
+
+              array('#type' => 'markup',
+                '#markup' => t("&nbsp &nbsp" )),
+
+              array('#type' => 'link',
+                '#title' => t('delete'),
+                '#href' => "ticket/$entity->tid/delete")
             )
           ),
         ),
@@ -221,8 +227,43 @@ function ticket_add() {
   return drupal_get_form('ticket_form', $entity);
 }
 
+function ticket_basic_delete($entity) {
+  entity_get_controller('ticket')->delete(array($entity->tid));
+  drupal_set_message(t('The entity deleted'));
+}
+
 function ticket_success() {
     return  t('You have successfully received the ticket.');
+}
+
+function ticket_delete($form, &$form_state) {
+  $entity = $form_state['ticket'];
+
+  entity_get_controller('ticket')->delete(array($entity->tid));
+  $form_state['redirect'] = 'admin/structure/tickets/manage';
+}
+
+function ticket_delete_confirm($form, &$form_state, $ticket) {
+  if (!isset($ticket)) {
+    $ticket = $form_state['ticket'];
+  }
+  $form['tid'] = array('#type' => 'value', '#value' => $ticket->tid);
+  return confirm_form($form,
+    t('Are you sure you want to delete entity with id: %id?', array('%id' => $ticket->tid)),
+    'admin/structure/tickets/manage',
+    t('This action cannot be undone.'),
+    t('Delete'),
+    t('Cancel')
+  );
+}
+
+function ticket_delete_confirm_submit($form, &$form_state) {
+  if ($form_state['values']['confirm']) {
+    $tid = $form_state['values']['tid'];
+    $ticket = ticket_load($tid);
+    ticket_basic_delete($ticket);
+    $form_state['redirect'] = 'admin/structure/tickets/manage';
+  }
 }
 
 function ticket_form($form, &$form_state, $entity) {
@@ -256,7 +297,7 @@ function ticket_form_validate($form, &$form_state) {
   if (is_numeric($form_state['values']['seats']) &&  $form_state['values']['seats'] > 0) {
         field_attach_form_validate('ticket', $form_state['ticket'], $form, $form_state);
       } else {
-        form_set_error('seats', t('Enter a positive number.'));
+        form_set_error('seats', t('Enter number > 0'));
       }
 
 }
@@ -268,10 +309,18 @@ function ticket_form_submit($form, &$form_state) {
 
   entity_form_submit_build_entity('ticket', $entity, $form, $form_state);
   $entity = ticket_save($entity);
-    if (in_array('administrator', $user->roles)) {
-        $form_state['redirect'] = 'admin/structure/tickets/manage';
-      } else {
-        $form_state['redirect'] = 'ticket/get/success/';
-     }
+//    if (in_array('administrator', $user->roles)) {
+//        $form_state['redirect'] = 'admin/structure/tickets/manage';
+//      } else {
+//        $form_state['redirect'] = 'ticket/get/success/';}
 
+}
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function ticket_ctools_plugin_directory($module, $plugin_type) {
+  if ($module == 'ctools') {
+    return 'plugins/' . $plugin_type;
+  }
 }
