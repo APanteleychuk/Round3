@@ -49,22 +49,23 @@ function ticket_menu() {
   );
 
 //   Add example entities.
-//  $items['ticket/get'] = array(
-//    'title' => 'Request a ticket',
-//    'page callback' => 'ticket_add',
-//    'access arguments' => array('create ticket entity'),
-//  );
+  $items['ticket/get'] = array(
+    'title' => 'Request a ticket',
+    'page callback' => 'ticket_add',
+    'access arguments' => array('create ticket entity'),
+  );
 
   $items['ticket/%ticket'] = array(
     'title callback' => 'ticket_title',
     'title arguments' => array(1),
-    'page callback' => 'ticket_view',
+    'page callback' => 'ticket_entity_view',
     'page arguments' => array(1),
     'access arguments' => array('view ticket entity'),
   );
 
     // 'View' tab for an individual entity page.
   $items['ticket/%ticket/view'] = array(
+    'page callback' => 'ticket_entity_view',
     'title' => 'View',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
@@ -81,11 +82,19 @@ function ticket_menu() {
 
   $items['ticket/%ticket/delete'] = array(
     'title' => 'Delete',
-    'page callback' => 'ticket_delete',
-    'page arguments' => array(1),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ticket_delete_confirm', 1),
     'access arguments' => array('delete ticket entity'),
     'type' => MENU_LOCAL_TASK,
   );
+
+//  $items['ticket/%ticket/delete'] = array(
+//    'title' => 'Delete',
+//    'page callback' => 'ticket_delete',
+//    'page arguments' => array(1),
+//    'access arguments' => array('delete ticket entity'),
+//    'type' => MENU_LOCAL_TASK,
+//  );
 
   $items['ticket/get/success'] = array(
         'title' => 'Success',
@@ -323,4 +332,38 @@ function ticket_ctools_plugin_directory($module, $plugin_type) {
   if ($module == 'ctools') {
     return 'plugins/' . $plugin_type;
   }
+}
+
+
+/**
+ * Implements hook_entity_view().
+ */
+function ticket_entity_view($entity) {
+//  return entity_view($entity_type, array($entity));
+
+  $entity->content['created'] = array(
+    '#type' => 'item',
+    '#title' => t('Created date'),
+    '#markup' => format_date($entity->created),
+  );
+
+  $entity->content['first_name'] = array(
+    '#type' => 'item',
+    '#title' => t('Name'),
+    '#markup' => $entity->field_first_name['und'][0]['value'],
+  );
+
+  $entity->content['last_name'] = array(
+    '#type' => 'item',
+    '#title' => t('Soname'),
+    '#markup' => $entity->field_last_name['und'][0]['value'],
+  );
+
+  $entity->content['seats'] = array(
+    '#type' => 'item',
+    '#title' => t('Seats'),
+    '#markup' => $entity->seats,
+  );
+
+  return $entity->content;
 }
